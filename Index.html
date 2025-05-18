@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Inventario de Café</title>
+    <!-- Estilos básicos -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+        .notification {
+            position: relative;
+        }
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .alert {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert h2 {
+            color: #92400e;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .alert ul {
+            color: #92400e;
+            margin-bottom: 0;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .card h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-green {
+            background-color: #10b981;
+        }
+        .btn-green:hover {
+            background-color: #059669;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background-color: #f9fafb;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6b7280;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-ok {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-low {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .btn-icon {
+            color: #ef4444;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .footer {
+            background-color: #e5e7eb;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 20px;
+        }
+        .quantity-field {
+            width: 70px !important;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .icon {
+            margin-right: 8px;
+        }
+        .quantity-container {
+            display: flex;
+            align-items: center;
+        }
+        .btn-save {
+            background: none;
+            color: #2563eb;
+            border: none;
+            padding: 0;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        .tab.active {
+            border-bottom-color: #2563eb;
+            color: #2563eb;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .sale-history {
+            margin-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span class="icon">☕</span>
+            Control de Inventario de Café
+        </h1>
+        <div class="notification">
+            <span>🔔</span>
+            <span id="alert-badge" class="badge" style="display: none;">0</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="low-stock-alert" style="display: none;" class="alert">
+            <h2>
+                <span class="icon">⚠️</span>
+                Alerta de Stock Bajo
+            </h2>
+            <ul id="low-stock-list"></ul>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="inventory">Inventario</div>
+            <div class="tab" data-tab="sales">Ventas</div>
+        </div>
+        
+        <!-- Pestaña de Inventario -->
+        <div id="tab-inventory" class="tab-content active">
+            <div class="card">
+                <h2>
+                    <span class="icon">➕</span>
+                    Añadir Nuevo Producto
+                </h2>
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="product-name">Nombre del Producto</label>
+                        <input type="text" id="product-name" class="form-control" placeholder="Ej: Café Colombiano">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-quantity">Cantidad</label>
+                        <input type="number" id="product-quantity" class="form-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-unit">Unidad</label>
+                        <select id="product-unit" class="form-control">
+                            <option value="kg">Kilogramos (kg)</option>
+                            <option value="g">Gramos (g)</option>
+                            <option value="lb">Libras (lb)</option>
+                            <option value="sacos">Sacos</option>
+                            <option value="paquetes">Paquetes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-threshold">Alerta en</label>
+                        <input type="number" id="product-threshold" class="form-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-variety">Variedad</label>
+                        <input type="text" id="product-variety" class="form-control" placeholder="Ej: Arábica">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-roast">Tueste</label>
+                        <select id="product-roast" class="form-control">
+                            <option value="Ligero">Ligero</option>
+                            <option value="Medio">Medio</option>
+                            <option value="Medio-Oscuro">Medio-Oscuro</option>
+                            <option value="Oscuro">Oscuro</option>
+                            <option value="Sin tueste">Sin tueste</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-grind">Grano/Molido</label>
+                        <select id="product-grind" class="form-control">
+                            <option value="Grano">Grano entero</option>
+                            <option value="Molido grueso">Molido grueso</option>
+                            <option value="Molido medio">Molido medio</option>
+                            <option value="Molido fino">Molido fino</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="btn-add-product" class="btn">
+                    <span class="icon">➕</span>
+                    Añadir Producto
+                </button>
+            </div>
+            
+            <div class="card">
+                <h2>
+                    <span class="icon">📦</span>
+                    Inventario Actual
+                </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Variedad</th>
+                            <th>Tueste</th>
+                            <th>Grano/Molido</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table-body">
+                        <!-- La tabla se llenará con JavaScript -->
+                    </tbody>
+                </table>
+                <div id="empty-inventory" style="display: none; text-align: center; padding: 30px; color: #6b7280;">
+                    No hay productos en el inventario. Añade algunos usando el formulario de arriba.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pestaña de Ventas -->
+        <div id="tab-sales" class="tab-content">
+            <div class="card">
+                <h2>
+                    <span class="icon">💰</span>
+                    Registrar Venta
+                </h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="sale-product">Producto</label>
+                        <select id="sale-product" class="form-control">
+                            <option value="">-- Selecciona un producto --</option>
+                            <!-- Las opciones se llenarán con JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-quantity">Cantidad</label>
+                        <input type="number" id="sale-quantity" class="form-control" min="0" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-date">Fecha</label>
+                        <input type="date" id="sale-date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-notes">Notas</label>
+                        <input type="text" id="sale-notes" class="form-control" placeholder="Opcional: cliente, detalles, etc.">
+                    </div>
+                </div>
+                <button id="btn-register-sale" class="btn btn-green">
+                    <span class="icon">💰</span>
+                    Registrar Venta
+                </button>
+            </div>
+            
+            <div class="card">
+                <h2>
+                    <span class="icon">📊</span>
+                    Historial de Ventas
+                </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body">
+                        <!-- La tabla se llenará con JavaScript -->
+                    </tbody>
+                </table>
+                <div id="empty-sales" style="display: none; text-align: center; padding: 30px; color: #6b7280;">
+                    No hay ventas registradas. Registra algunas usando el formulario de arriba.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Aplicación de Control de Inventario de Café © 2025
+    </div>
+
+    <script>
+        // Modelo de datos
+        let products = [];
+        let sales = [];
+        
+        // Al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            renderProducts();
+            updateLowStockAlert();
+            setupSalesDropdown();
+            renderSales();
+            setupTabs();
+            
+            // Establecer la fecha actual en el input de fecha
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sale-date').value = today;
+            
+            // Eventos
+            document.getElementById('btn-add-product').addEventListener('click', addProduct);
+            document.getElementById('btn-register-sale').addEventListener('click', registerSale);
+        });
+        
+        // Configurar las pestañas
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Desactivar todas las pestañas
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Ocultar todos los contenidos
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Activar la pestaña actual
+                    this.classList.add('active');
+                    
+                    // Mostrar el contenido correspondiente
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById('tab-' + tabId).classList.add('active');
+                });
+            });
+        }
+        
+        // Cargar datos desde localStorage
+        function loadData() {
+            const savedProducts = localStorage.getItem('cafeInventory');
+            if (savedProducts) {
+                products = JSON.parse(savedProducts);
+            } else {
+                // Productos de muestra
+                products = [
+                    { 
+                        id: 1, 
+                        name: 'Café Colombiano', 
+                        quantity: 15, 
+                        unit: 'kg', 
+                        threshold: 5,
+                        variety: 'Arábica',
+                        roast: 'Medio',
+                        grind: 'Grano'
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Café Etíope', 
+                        quantity: 8, 
+                        unit: 'kg', 
+                        threshold: 3,
+                        variety: 'Yirgacheffe',
+                        roast: 'Ligero',
+                        grind: 'Molido medio'
+                    },
+                    { 
+                        id: 3, 
+                        name: 'Café Brasileño', 
+                        quantity: 12, 
+                        unit: 'kg', 
+                        threshold: 4,
+                        variety: 'Arábica',
+                        roast: 'Medio-Oscuro',
+                        grind: 'Grano'
+                    }
+                ];
+                saveProducts();
+            }
+            
+            const savedSales = localStorage.getItem('cafeSales');
+            if (savedSales) {
+                sales = JSON.parse(savedSales);
+            }
+        }
+        
+        // Guardar productos en localStorage
+        function saveProducts() {
+            localStorage.setItem('cafeInventory', JSON.stringify(products));
+        }
+        
+        // Guardar ventas en localStorage
+        function saveSales() {
+            localStorage.setItem('cafeSales', JSON.stringify(sales));
+        }
+        
+        // Añadir un nuevo producto
+        function addProduct() {
+            const name = document.getElementById('product-name').value;
+            const quantity = parseFloat(document.getElementById('product-quantity').value);
+            const unit = document.getElementById('product-unit').value;
+            const threshold = parseFloat(document.getElementById('product-threshold').value);
+            const variety = document.getElementById('product-variety').value;
+            const roast = document.getElementById('product-roast').value;
+            const grind = document.getElementById('product-grind').value;
+            
+            if (!name || isNaN(quantity) || quantity <= 0 || isNaN(threshold) || threshold <= 0) {
+                alert('Por favor completa todos los campos obligatorios correctamente (nombre, cantidad y alerta)');
+                return;
+            }
+            
+            products.push({
+                id: Date.now(),
+                name,
+                quantity,
+                unit,
+                threshold,
+                variety,
+                roast,
+                grind
+            });
+            
+            saveProducts();
+            renderProducts();
+            updateLowStockAlert();
+            setupSalesDropdown();
+            
+            // Limpiar formulario
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-quantity').value = 0;
+            document.getElementById('product-threshold').value = 0;
+            document.getElementById('product-variety').value = '';
+        }
+        
+        // Actualizar cantidad de un producto
+        function updateQuantity(id, newQuantity) {
+            products = products.map(product => 
+                product.id === id ? { ...product, quantity: parseFloat(newQuantity) } : product
+            );
+            saveProducts();
+            updateLowStockAlert();
+            renderProducts();
+            setupSalesDropdown();
+        }
+        
+        // Eliminar un producto
+        function deleteProduct(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+                products = products.filter(product => product.id !== id);
+                saveProducts();
+                renderProducts();
+                updateLowStockAlert();
+                setupSalesDropdown();
+            }
+        }
+        
+        // Mostrar productos en la tabla
+        function renderProducts() {
+            const tableBody = document.getElementById('inventory-table-body');
+            const emptyInventory = document.getElementById('empty-inventory');
+            
+            if (products.length === 0) {
+                tableBody.innerHTML = '';
+                emptyInventory.style.display = 'block';
+                return;
+            }
+            
+            emptyInventory.style.display = 'none';
+            
+            let html = '';
+            products.forEach(product => {
+                const isLowStock = product.quantity <= product.threshold;
+                html += `
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>
+                            <div class="quantity-container">
+                                <input type="number" class="form-control quantity-field" value="${product.quantity}" min="0" 
+                                    onchange="updateQuantity(${product.id}, this.value)">
+                                <span>${product.unit}</span>
+                            </div>
+                        </td>
+                        <td>${product.variety || '-'}</td>
+                        <td>${product.roast}</td>
+                        <td>${product.grind}</td>
+                        <td>
+                            <span class="status ${isLowStock ? 'status-low' : 'status-ok'}">
+                                ${isLowStock ? 'Stock Bajo' : 'OK'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-icon" onclick="deleteProduct(${product.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+        
+        // Actualizar alerta de stock bajo
+        function updateLowStockAlert() {
+            const lowStockProducts = products.filter(product => product.quantity <= product.threshold);
+            const alertElement = document.getElementById('low-stock-alert');
+            const badgeElement = document.getElementById('alert-badge');
+            const listElement = document.getElementById('low-stock-list');
+            
+            if (lowStockProducts.length > 0) {
+                alertElement.style.display = 'block';
+                badgeElement.style.display = 'flex';
+                badgeElement.textContent = lowStockProducts.length;
+                
+                let listHtml = '';
+                lowStockProducts.forEach(product => {
+                    listHtml += `<li>${product.name}: ${product.quantity} ${product.unit} (Umbral: ${product.threshold} ${product.unit})</li>`;
+                });
+                
+                listElement.innerHTML = listHtml;
+            } else {
+                alertElement.style.display = 'none';
+                badgeElement.style.display = 'none';
+            }
+        }
+        
+        // Configurar el dropdown de productos para venta
+        function setupSalesDropdown() {
+            const dropdown = document.getElementById('sale-product');
+            
+            // Limpiar opciones actuales
+            dropdown.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+            
+            // Añadir productos disponibles
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.name} - ${product.quantity} ${product.unit} disponibles`;
+                option.dataset.unit = product.unit;
+                dropdown.appendChild(option);
+            });
+        }
+        
+        // Registrar una venta
+        function registerSale() {
+            const productId = document.getElementById('sale-product').value;
+            if (!productId) {
+                alert('Por favor selecciona un producto');
+                return;
+            }
+            
+            const product = products.find(p => p.id == productId);
+            if (!product) {
+                alert('Producto no encontrado');
+                return;
+            }
+            
+            const quantityToSell = parseFloat(document.getElementById('sale-quantity').value);
+            if (isNaN(quantityToSell) || quantityToSell <= 0) {
+                alert('Por favor ingresa una cantidad válida');
+                return;
+            }
+            
+            if (quantityToSell > product.quantity) {
+                alert(`No hay suficiente inventario. Solo tienes ${product.quantity} ${product.unit} disponibles.`);
+                return;
+            }
+            
+            const saleDate = document.getElementById('sale-date').value;
+            if (!saleDate) {
+                alert('Por favor selecciona una fecha');
+                return;
+            }
+            
+            const saleNotes = document.getElementById('sale-notes').value;
+            
+            // Reducir inventario
+            product.quantity -= quantityToSell;
+            saveProducts();
+            updateLowStockAlert();
+            renderProducts();
+            setupSalesDropdown();
+            
+            // Registrar venta
+            const sale = {
+                id: Date.now(),
+                productId: product.id,
+                productName: product.name,
+                quantity: quantityToSell,
+                unit: product.unit,
+                date: saleDate,
+                notes: saleNotes
+            };
+            
+            sales.push(sale);
+            saveSales();
+            renderSales();
+            
+            // Limpiar el formulario de ventas
+            document.getElementById('sale-quantity').value = 1;
+            document.getElementById('sale-notes').value = '';
+            
+            alert('Venta registrada con éxito');
+        }
+        
+        // Mostrar ventas en la tabla
+        function renderSales() {
+            const tableBody = document.getElementById('sales-table-body');
+            const emptySales = document.getElementById('empty-sales');
+            
+            if (sales.length === 0) {
+                tableBody.innerHTML = '';
+                emptySales.style.display = 'block';
+                return;
+            }
+            
+            emptySales.style.display = 'none';
+            
+            // Ordenar ventas por fecha (más reciente primero)
+            const sortedSales = [...sales].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            let html = '';
+            sortedSales.forEach(sale => {
+                // Formatear fecha para mostrar DD/MM/YYYY
+                const date = new Date(sale.date);
+                const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+                
+                html += `
+                    <tr>
+                        <td>${formattedDate}</td>
+                        <td>${sale.productName}</td>
+                        <td>${sale.quantity} ${sale.unit}</td>
+                        <td>${sale.notes || '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
