@@ -6,80 +6,76 @@
   <title>Inventario de Café</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .dashboard-card h3 { font-size: 2rem; }
+    .dashboard-card h6 { text-transform: uppercase; font-weight: bold; }
+    .btn-delete { color: #dc3545; cursor: pointer; }
+    .chart-container { position: relative; height: 200px; margin-bottom: 20px; }
+  </style>
 </head>
 <body>
   <div class="container py-4">
     <h1 class="mb-4 text-center">Inventario de Café</h1>
-    <!-- Pestañas -->
-    <ul class="nav nav-tabs mb-3" id="tabMenu">
+    <ul class="nav nav-tabs" id="tabMenu">
       <li class="nav-item"><a class="nav-link active" data-target="sectionAdd">Alta Producto</a></li>
-      <li class="nav-item"><a class="nav-link" data-target="sectionSale">Registro Venta</a></li>
       <li class="nav-item"><a class="nav-link" data-target="sectionClientAdd">Alta Cliente</a></li>
       <li class="nav-item"><a class="nav-link" data-target="sectionClients">Clientes</a></li>
+      <li class="nav-item"><a class="nav-link" data-target="sectionDashboard">Dashboard</a></li>
     </ul>
-    <div class="tab-content">
+    <div class="tab-content mt-3">
       <!-- Alta Producto -->
       <div id="sectionAdd" class="tab-pane fade show active">
-        <div class="card mb-3"><div class="card-body">
+        <div class="card"><div class="card-body">
           <h5 class="card-title">Alta de Producto</h5>
           <form id="formAdd">
             <div class="mb-3">
-              <label class="form-label">Calidad</label>
+              <label for="calidad" class="form-label">Calidad</label>
               <select id="calidad" class="form-select">
                 <option value="">Seleccione</option>
-                <option>Desmanche</option><option>PL20</option><option>Americana</option><option>Europea</option>
+                <option>Desmanche</option>
+                <option>PL20</option>
+                <option>Americana</option>
+                <option>Europea</option>
               </select>
             </div>
             <div class="mb-3">
-              <label class="form-label">Tueste</label>
+              <label for="tueste" class="form-label">Tueste</label>
               <select id="tueste" class="form-select">
                 <option value="">Seleccione</option>
-                <option>Clásico</option><option>Acadian</option><option>Medio</option>
+                <option>Clásico</option>
+                <option>Acadian</option>
+                <option>Medio</option>
               </select>
             </div>
             <div class="mb-3">
-              <label class="form-label">Molido</label>
+              <label for="molido" class="form-label">Molido</label>
               <select id="molido" class="form-select">
                 <option value="">Seleccione</option>
-                <option>En grano</option><option>Molido</option>
+                <option>En grano</option>
+                <option>Molido</option>
               </select>
             </div>
             <div class="mb-3">
-              <label class="form-label">Stock Inicial (kg)</label>
+              <label for="stock" class="form-label">Stock Inicial (kg)</label>
               <input type="number" id="stock" class="form-control" step="0.01" min="0">
             </div>
             <div class="mb-3">
-              <label class="form-label">Umbral Alerta (kg)</label>
+              <label for="umbral" class="form-label">Umbral Alerta (kg)</label>
               <input type="number" id="umbral" class="form-control" step="0.01" min="0">
             </div>
             <button type="submit" class="btn btn-primary">Guardar Producto</button>
           </form>
         </div></div>
       </div>
-      <!-- Registro Venta -->
-      <div id="sectionSale" class="tab-pane fade">
-        <div class="card mb-3"><div class="card-body">
-          <h5 class="card-title">Registro de Venta</h5>
-          <form id="formSale">
-            <div class="mb-3">
-              <label class="form-label">Producto</label>
-              <select id="prodSale" class="form-select"><option value="">Seleccione</option></select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Cantidad vendida (kg)</label>
-              <input type="number" id="qtySale" class="form-control" step="0.01" min="0">
-            </div>
-            <button type="submit" class="btn btn-success">Registrar Venta</button>
-          </form>
-        </div></div>
-      </div>
       <!-- Alta Cliente -->
       <div id="sectionClientAdd" class="tab-pane fade">
-        <div class="card mb-3"><div class="card-body">
+        <div class="card"><div class="card-body">
           <h5 class="card-title">Alta de Cliente</h5>
           <form id="formClientAdd">
             <div class="mb-3">
-              <label class="form-label">Nombre del Cliente</label>
+              <label for="clientName" class="form-label">Nombre del Cliente</label>
               <input type="text" id="clientName" class="form-control">
             </div>
             <button type="submit" class="btn btn-primary">Guardar Cliente</button>
@@ -93,15 +89,15 @@
           <form id="formClientSale">
             <div class="row">
               <div class="col-md-4 mb-3">
-                <label class="form-label">Cliente</label>
-                <select id="selectClient" class="form-select"><option value="">Seleccione</option></select>
+                <label for="selectClient" class="form-label">Cliente</label>
+                <select id="selectClient" class="form-select"><option value="">Seleccione cliente</option></select>
               </div>
               <div class="col-md-4 mb-3">
-                <label class="form-label">Producto</label>
-                <select id="selectProdClientSale" class="form-select"><option value="">Seleccione</option></select>
+                <label for="selectProdClientSale" class="form-label">Producto</label>
+                <select id="selectProdClientSale" class="form-select"><option value="">Seleccione producto</option></select>
               </div>
               <div class="col-md-4 mb-3">
-                <label class="form-label">Cantidad (kg)</label>
+                <label for="qtyClientSale" class="form-label">Cantidad (kg)</label>
                 <input type="number" id="qtyClientSale" class="form-control" step="0.01" min="0">
               </div>
             </div>
@@ -116,115 +112,66 @@
           </table>
         </div></div>
       </div>
+      <!-- Dashboard -->
+      <div id="sectionDashboard" class="tab-pane fade">
+        <div class="mb-3">
+          <input type="text" id="dashboardFilter" class="form-control" placeholder="Filtrar productos...">
+        </div>
+        <div class="row">
+          <div class="col-md-6 chart-container"><canvas id="stockChart"></canvas></div>
+          <div class="col-md-6 chart-container"><canvas id="salesChart"></canvas></div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6"><div class="card bg-light dashboard-card text-center"><div class="card-body"><h6>Total Productos</h6><h3 id="totalProducts">0</h3></div></div></div>
+          <div class="col-md-6"><div class="card bg-light dashboard-card text-center"><div class="card-body"><h6>Productos Bajo Stock</h6><h3 id="lowProducts">0</h3></div></div></div>
+        </div>
+        <div class="alert alert-danger d-none" id="lowStockAlert">🔔 Algunos productos están por debajo del umbral. ¡Reponer pronto!</div>
+        <div class="card"><div class="card-body"><h5 class="card-title">Inventario Actual</h5>
+          <table class="table table-striped"><thead><tr><th>ID</th><th>Producto</th><th>Stock (kg)</th><th>Umbral (kg)</th><th>Acciones</th></tr></thead><tbody id="inventoryTable"></tbody></table>
+        </div></div>
+      </div>
     </div>
   </div>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Estado global evitamos redeclaraciones
-    window.appState = window.appState || {
-      products: [], sales: [], clients: [], nextProductId:1, nextClientId:1
-    };
+    (() => {
+      const s = window.appState = window.appState || { products: [], sales: [], clients: [], nextProductId: 1, nextClientId: 1 };
+      let stockChart, salesChart;
+      let lowStockAlreadyNotified = false;
 
-    function saveStorage() {
-      const s=window.appState;
-      localStorage.setItem('products', JSON.stringify(s.products));
-      localStorage.setItem('sales', JSON.stringify(s.sales));
-      localStorage.setItem('clients', JSON.stringify(s.clients));
-      localStorage.setItem('nextProductId', s.nextProductId);
-      localStorage.setItem('nextClientId', s.nextClientId);
-    }
-    function loadStorage() {
-      const s=window.appState;
-      const p=localStorage.getItem('products');
-      const sa=localStorage.getItem('sales');
-      const c=localStorage.getItem('clients');
-      const n=localStorage.getItem('nextProductId');
-      const m=localStorage.getItem('nextClientId');
-      s.products = p?JSON.parse(p):[];
-      s.sales = sa?JSON.parse(sa):[];
-      s.clients = c?JSON.parse(c):[];
-      if(n&&!isNaN(+n))s.nextProductId=+n;
-      if(m&&!isNaN(+m))s.nextClientId=+m;
-    }
+      function saveStorage() { localStorage.setItem('products', JSON.stringify(s.products)); localStorage.setItem('sales', JSON.stringify(s.sales)); localStorage.setItem('clients', JSON.stringify(s.clients)); localStorage.setItem('nextProductId', s.nextProductId); localStorage.setItem('nextClientId', s.nextClientId); }
+      function loadStorage() { const p = localStorage.getItem('products'), sa = localStorage.getItem('sales'), c = localStorage.getItem('clients'), n = localStorage.getItem('nextProductId'), m = localStorage.getItem('nextClientId'); s.products = p?JSON.parse(p):[]; s.sales = sa?JSON.parse(sa):[]; s.clients = c?JSON.parse(c):[]; if(n&&!isNaN(+n)) s.nextProductId = +n; if(m&&!isNaN(+m)) s.nextClientId = +m; }
 
-    loadStorage();
+      function initCharts() {
+        const ctx1 = document.getElementById('stockChart').getContext('2d');
+        stockChart = new Chart(ctx1, { type:'bar', data:{labels:[], datasets:[{label:'Stock (kg)', data:[], backgroundColor:'rgba(54,162,235,0.5)'}]}, options:{responsive:true, maintainAspectRatio:false} });
+        const ctx2 = document.getElementById('salesChart').getContext('2d');
+        salesChart = new Chart(ctx2, { type:'line', data:{labels:[], datasets:[{label:'Ventas (kg)', data:[], backgroundColor:'rgba(255,99,132,0.5)', fill:true}]}, options:{responsive:true, maintainAspectRatio:false} });
+      }
 
-    // Pestañas
-    document.querySelectorAll('#tabMenu .nav-link').forEach(link=>{
-      link.addEventListener('click',()=>{
-        document.querySelectorAll('#tabMenu .nav-link').forEach(l=>l.classList.remove('active'));
-        link.classList.add('active');
-        document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show','active'));
-        document.getElementById(link.dataset.target).classList.add('show','active');
-        if(link.dataset.target==='sectionSale') loadProductsForSelect('prodSale');
-        if(link.dataset.target==='sectionClients'){
-          loadClientsForSelect(); loadProductsForSelect('selectProdClientSale'); refreshClientsList();
-        }
-      });
-    });
+      function loadSelect(id, items) { const sel=document.getElementById(id); if(!sel) return; sel.innerHTML='<option value="">Seleccione</option>'; items.forEach(item=>{ const opt=document.createElement('option'); opt.value=item.id; opt.text=item.name||`${item.calidad}-${item.tueste}-${item.molido}`; sel.add(opt); }); }
+      function renderClients() { const tbody=document.getElementById('clientsTable'); tbody.innerHTML=''; s.clients.forEach(c=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${c.id}</td><td>${c.name}</td>`; tbody.appendChild(tr); }); }
+      function renderDashboard() {
+        const tbody=document.getElementById('inventoryTable'), alertBox=document.getElementById('lowStockAlert'), filter=document.getElementById('dashboardFilter').value.toLowerCase(); let lowCount=0; tbody.innerHTML=''; const labels=[], stockData=[], salesData=[];
+        s.products.forEach(p=>{ const name=`${p.calidad}-${p.tueste}-${p.molido}`; if(filter && !name.toLowerCase().includes(filter)) return; labels.push(name); stockData.push(p.stock); salesData.push(s.sales.filter(x=>x.productId===p.id).reduce((a,b)=>a+b.qty,0)); const cls=p.stock<=p.umbral?'text-danger fw-bold':''; if(p.stock<=p.umbral) lowCount++; const tr=document.createElement('tr'); tr.innerHTML=`<td>${p.id}</td><td>${name}</td><td class="${cls}">${p.stock.toFixed(2)}</td><td>${p.umbral.toFixed(2)}</td><td><span class="btn-delete" data-id="${p.id}">&#10060;</span></td>`; tbody.appendChild(tr); });
+        document.getElementById('totalProducts').textContent = s.products.length;
+        document.getElementById('lowProducts').textContent = lowCount;
+        alertBox.classList.toggle('d-none', lowCount===0);
+        stockChart.data.labels = labels; stockChart.data.datasets[0].data = stockData; stockChart.update();
+        salesChart.data.labels = labels; salesChart.data.datasets[0].data = salesData; salesChart.update();
+        if(lowCount>0 && Notification.permission==='granted' && !lowStockAlreadyNotified){ new Notification('Inventario bajo',{body:`${lowCount} productos con stock bajo`}); lowStockAlreadyNotified=true; }
+        if(lowCount===0) lowStockAlreadyNotified=false;
+        document.querySelectorAll('.btn-delete').forEach(btn=>btn.addEventListener('click',()=>{ const id=+btn.getAttribute('data-id'); s.products=s.products.filter(x=>x.id!==id); saveStorage(); renderDashboard(); }));
+      }
 
-    // Helpers selects
-    function loadProductsForSelect(selectId){
-      const sel=document.getElementById(selectId);
-      sel.innerHTML='<option value="">Seleccione</option>';
-      window.appState.products.forEach(p=> sel.add(new Option(`${p.calidad}-${p.tueste}-${p.molido}`,p.id)));
-    }
-    function loadClientsForSelect(){
-      const sel=document.getElementById('selectClient');
-      sel.innerHTML='<option value="">Seleccione</option>';
-      window.appState.clients.forEach(c=> sel.add(new Option(c.name,c.id)));
-    }
-    function refreshClientsList(){
-      const tbody=document.getElementById('clientsTable');tbody.innerHTML='';
-      window.appState.clients.forEach(c=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`<td>${c.id}</td><td>${c.name}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // Formularios
-    document.getElementById('formAdd').addEventListener('submit',e=>{
-      e.preventDefault(); const s=window.appState;
-      const calidad=document.getElementById('calidad').value;
-      const tueste=document.getElementById('tueste').value;
-      const molido=document.getElementById('molido').value;
-      const stock=parseFloat(document.getElementById('stock').value);
-      const umbral=parseFloat(document.getElementById('umbral').value);
-      if(!calidad||!tueste||!molido||isNaN(stock)||isNaN(umbral))return alert('Complete todos los campos');
-      s.products.push({id:s.nextProductId++,calidad,tueste,molido,stock,umbral});
-      saveStorage();alert('Producto registrado');e.target.reset();
-    });
-
-    document.getElementById('formSale').addEventListener('submit',e=>{
-      e.preventDefault(); const s=window.appState;
-      const pid=+document.getElementById('prodSale').value;
-      const qty=parseFloat(document.getElementById('qtySale').value);
-      if(isNaN(pid)||isNaN(qty)||qty<=0)return alert('Datos inválidos');
-      const prod=s.products.find(p=>p.id===pid);
-      prod.stock-=qty; s.sales.push({productId:pid,qty,date:new Date().toISOString()});
-      saveStorage();alert('Venta registrada');e.target.reset();
-    });
-
-    document.getElementById('formClientAdd').addEventListener('submit',e=>{
-      e.preventDefault(); const s=window.appState;
-      const name=document.getElementById('clientName').value.trim();
-      if(!name)return alert('Nombre requerido');
-      s.clients.push({id:s.nextClientId++,name});
-      saveStorage();alert('Cliente registrado');e.target.reset();
-    });
-
-    document.getElementById('formClientSale').addEventListener('submit',e=>{
-      e.preventDefault(); const s=window.appState;
-      const cid=+document.getElementById('selectClient').value;
-      const pid=+document.getElementById('selectProdClientSale').value;
-      const qty=parseFloat(document.getElementById('qtyClientSale').value);
-      if(isNaN(cid)||isNaN(pid)||isNaN(qty)||qty<=0)return alert('Datos inválidos');
-      const prod=s.products.find(p=>p.id===pid);
-      prod.stock-=qty; s.sales.push({clientId:cid,productId:pid,qty,date:new Date().toISOString()});
-      saveStorage();alert('Compra registrada para cliente');e.target.reset();
-    });
+      document.getElementById('formAdd').addEventListener('submit', e=>{ e.preventDefault(); const cal=document.getElementById('calidad').value, tu=document.getElementById('tueste').value, mo=document.getElementById('molido').value, st=parseFloat(document.getElementById('stock').value), um=parseFloat(document.getElementById('umbral').value); if(!cal||!tu||!mo||isNaN(st)||isNaN(um)) return alert('Complete todos los campos'); s.products.push({id:s.nextProductId++, calidad:cal, tueste:tu, molido:mo, stock:st, umbral:um}); saveStorage(); alert('Producto registrado'); e.target.reset(); });
+      document.getElementById('formClientAdd').addEventListener('submit', e=>{ e.preventDefault(); const name=document.getElementById('clientName').value.trim(); if(!name) return alert('Nombre requerido'); s.clients.push({id:s.nextClientId++, name}); saveStorage(); alert('Cliente registrado'); e.target.reset(); });
+      document.getElementById('formClientSale').addEventListener('submit', e=>{ e.preventDefault(); const cid=+document.getElementById('selectClient').value, pid=+document.getElementById('selectProdClientSale').value, qty=parseFloat(document.getElementById('qtyClientSale').value); if(isNaN(cid)||isNaN(pid)||isNaN(qty)||qty<=0) return alert('Datos inválidos'); const prod=s.products.find(x=>x.id===pid); if(qty>prod.stock) return alert('Cantidad excede stock'); prod.stock-=qty; s.sales.push({clientId:cid, productId:pid, qty, date:new Date().toISOString()}); saveStorage(); alert('Compra registrada'); renderDashboard(); });
+      document.querySelectorAll('#tabMenu .nav-link').forEach(link=>link.addEventListener('click',function(){ const target=this.getAttribute('data-target'); document.querySelectorAll('#tabMenu .nav-link').forEach(l=>l.classList.remove('active')); this.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show','active')); document.getElementById(target).classList.add('show','active'); if(target==='sectionClients'){ loadSelect('selectClient',s.clients); loadSelect('selectProdClientSale',s.products); renderClients(); } if(target==='sectionDashboard') renderDashboard(); }));
+      loadStorage(); initCharts(); if('Notification' in window) Notification.requestPermission();
+    })();
   </script>
 </body>
 </html>
